@@ -8,6 +8,7 @@ import librosa
 
 import matplotlib.pyplot as plt
 import sys
+from scipy.fftpack import dct
 np.set_printoptions(threshold=sys.maxsize)
 
 #import sounddevice as sd
@@ -175,8 +176,10 @@ class pre_processing:
         return filter_bank_frames
         
 
-    def abstract_mfcc(self,data):
-        pass
+    def abstract_mfcc(self,filter_bank_frames,num_ceps=12):
+        mfcc = dct(filter_bank_frames, type=2, axis=1 , norm='ortho')[:,1:num_ceps+1]
+        #print(mfcc.shape,mfcc)
+        return mfcc
     
         
 pp = pre_processing()
@@ -200,10 +203,11 @@ for i in range(len(frames)):
 #print(len(frames),frames[0])
 
 filter_bank_frames = pp.filter_bank(frames,samplerate)
-print(np.shape(filter_bank_frames))
+mfccs = pp.abstract_mfcc(filter_bank_frames)
+#print(np.shape(filter_))
 #plt.specgram(filter_bank_frames)
 #x =  np.swapaxes(filter_bank_frames,0,1)
-plt.matshow(filter_bank_frames)
+plt.matshow(mfccs)
 #plt.matshow(x)
 plt.xlabel('Time')
 plt.ylabel('fbank')
